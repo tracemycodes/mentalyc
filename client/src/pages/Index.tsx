@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import AudioModal from '../components/Modal/AudioModal';
 
 type Props = {};
 
@@ -114,8 +115,10 @@ const Index = (props: Props) => {
   return (
     <div>
       <h2>Welcome back, Georgi</h2>
+      
       <div className="flex">
         <p>Ready to capture another meaningful session?</p>
+
         <div className="ml-auto space-x-6">
           <button onClick={handleStartRecording}>record</button>
           <button onClick={handleStopRecording}>stop</button>
@@ -131,6 +134,8 @@ const Index = (props: Props) => {
           <div className="border border-blue-800 h-12 w-12">okay</div>
         )}
       </div>
+      
+      <AudioModal/>
     </div>
   );
 };
