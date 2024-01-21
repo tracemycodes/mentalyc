@@ -85,7 +85,7 @@ const AudioModal: React.FC<Props> = ({ toggle, handleModalToggle, handleAudioUpl
   }, []);
 
   const getAudioRef = (audioData: any) => {
-    return URL.createObjectURL(new Blob(audioData));
+    return URL.createObjectURL(new Blob(audioData, {type: 'audio/ogg; codec=opus'}));
   };
 
   useEffect(() => {

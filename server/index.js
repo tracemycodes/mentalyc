@@ -4,10 +4,9 @@ const http = require("http");
 const { Server } = require("socket.io");
 const cors = require("cors");
 
-// Enable CORS for all routes
+
 app.use(cors());
 
-// Middleware to parse JSON data in requests
 app.use(express.json({ extended: false }));
 
 const server = http.createServer(app);

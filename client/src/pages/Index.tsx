@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AudioModal from '../components/Modal/AudioModal';
+import axios from 'axios';
 
 type Props = {};
 
@@ -9,20 +10,35 @@ const Index = (props: Props) => {
 
   const handleNeweRecording = () => {
     setUploadState(false);
-    setToggleModal(!toggleModal)
-  };
-  
-  const handleUploadRecording = () => {
-    setUploadState(true);
-    setToggleModal(!toggleModal)
+    setToggleModal(!toggleModal);
   };
 
-  const handleAudioUpload = (sessionData: any) => {
+  const handleUploadRecording = () => {
+    setUploadState(true);
+    setToggleModal(!toggleModal);
+  };
+
+  const handleAudioUpload = async (sessionData: any) => {
     const formData = new FormData();
     formData.append('name', sessionData.name);
     formData.append('title', sessionData.title);
     formData.append('audio', sessionData.audio);
-  }
+
+    try {
+      const response = await axios.post(
+        'http://localhost:8000/api/audio',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      console.log('Upload successful', response.data);
+    } catch (error) {
+      console.error('Error uploading file', error);
+    }
+  };
 
   return (
     <div>
