@@ -113,9 +113,16 @@ const Index = (props: Props) => {
 
   return (
     <div>
+      <h2>Welcome back, Georgi</h2>
       <div className="flex">
-        <button onClick={handleStartRecording}>record</button>
-        <button onClick={handleStopRecording}>stop</button>
+        <p>Ready to capture another meaningful session?</p>
+        <div className="ml-auto space-x-6">
+          <button onClick={handleStartRecording}>record</button>
+          <button onClick={handleStopRecording}>stop</button>
+        </div>
+      </div>
+
+      <div className="flex">
         {audioUrl ? (
           <div className="border-4 border-red-800 h-10 min-w-10">
             <audio src={audioUrl} controls />
