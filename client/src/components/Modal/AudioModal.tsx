@@ -2,9 +2,15 @@ import { Fragment, useEffect, useRef, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { FaMicrophoneAlt, FaMicrophoneAltSlash } from 'react-icons/fa';
 
+interface UploadProps {
+  name: string;
+  title: string;
+  audio: string | null;
+}
 interface Props {
   toggle: boolean;
   handleModalToggle: () => void;
+  handleAudioUpload: (params: UploadProps) => void;
 }
 
 interface AudioDevice {
@@ -12,24 +18,27 @@ interface AudioDevice {
   name: string;
 }
 
-const AudioModal: React.FC<Props> = ({ toggle, handleModalToggle }) => {
+const AudioModal: React.FC<Props> = ({ toggle, handleModalToggle, handleAudioUpload }) => {
   const [open, setOpen] = useState<boolean>(false);
   const cancelButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const [microphonePermissionState, setMicrophonePermissionState] = useState<
     'granted' | 'prompt' | 'denied'
   >('denied');
-
   const [availableAudioDevices, setAvailableAudioDevices] = useState<
     AudioDevice[]
   >([]);
+
   const [selectedAudioDevice, setSelectedAudioDevice] = useState<
     string | undefined
   >(undefined);
   const [isRecording, setIsRecording] = useState<boolean>(false);
-
   const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [sessionForm, setSessionForm] = useState({
+    name: '',
+    title: '',
+  });
 
   // Get available audio devices
   const getAvailableAudioDevices = (): Promise<any[]> => {
@@ -133,6 +142,16 @@ const AudioModal: React.FC<Props> = ({ toggle, handleModalToggle }) => {
     }
   };
 
+  const handleFormChange = (e: any) => {
+    e.preventDefault();
+    console.log(e.target.value, e.target.name);
+    setSessionForm({ ...sessionForm, [e.target.name]: e.target.value });
+  };
+
+  const handleFormSubmit = (e: any) => {
+    handleAudioUpload({...sessionForm, audio: audioUrl})
+  }
+
   return (
     <Transition.Root show={true} as={Fragment}>
       <Dialog
@@ -164,7 +183,7 @@ const AudioModal: React.FC<Props> = ({ toggle, handleModalToggle }) => {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-xl">
                 <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                   <div className="mt-3 text-center sm:text-left">
                     <Dialog.Title
@@ -183,6 +202,9 @@ const AudioModal: React.FC<Props> = ({ toggle, handleModalToggle }) => {
                           <input
                             type="text"
                             id="name"
+                            name="name"
+                            onChange={handleFormChange}
+                            value={sessionForm.name}
                             className="border px-3 p-2 rounded"
                             placeholder="Enter clients name"
                           />
@@ -195,20 +217,11 @@ const AudioModal: React.FC<Props> = ({ toggle, handleModalToggle }) => {
                           <input
                             type="text"
                             id="title"
+                            name="title"
+                            onChange={handleFormChange}
+                            value={sessionForm.title}
                             className="border px-3 p-2 rounded text-base"
                             placeholder="Enter session title"
-                          />
-                        </div>
-
-                        <div className="flex flex-col space-y-0.5">
-                          <label htmlFor="text" className="text-sm">
-                            Session note
-                          </label>
-                          <textarea
-                            rows={2}
-                            id="text"
-                            className="border px-3 p-2 rounded text-base"
-                            placeholder="Enter session notes"
                           />
                         </div>
 
@@ -221,11 +234,13 @@ const AudioModal: React.FC<Props> = ({ toggle, handleModalToggle }) => {
                           </button>
 
                           {isRecording ? (
-                            <p>Recording...</p>
+                            <p className="text-sm">Recording...</p>
                           ) : audioUrl && !isRecording ? (
                             <audio src={audioUrl} controls></audio>
                           ) : (
-                            <p>click record to attach audio file</p>
+                            <p className="text-sm">
+                              click record to attach audio file
+                            </p>
                           )}
 
                           <div className="">
@@ -254,7 +269,7 @@ const AudioModal: React.FC<Props> = ({ toggle, handleModalToggle }) => {
                   <button
                     type="button"
                     className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
-                    onClick={handleModalToggle}
+                    onClick={handleFormSubmit}
                   >
                     Submit
                   </button>

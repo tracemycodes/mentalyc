@@ -17,6 +17,13 @@ const Index = (props: Props) => {
     setToggleModal(!toggleModal)
   };
 
+  const handleAudioUpload = (sessionData: any) => {
+    const formData = new FormData();
+    formData.append('name', sessionData.name);
+    formData.append('title', sessionData.title);
+    formData.append('audio', sessionData.audio);
+  }
+
   return (
     <div>
       <h2>Welcome back, Georgi</h2>
@@ -33,6 +40,7 @@ const Index = (props: Props) => {
       <AudioModal
         toggle={toggleModal}
         handleModalToggle={() => setToggleModal(!toggleModal)}
+        handleAudioUpload={handleAudioUpload}
       />
     </div>
   );
