@@ -3,14 +3,14 @@ import './App.css';
 import { Route, Routes } from 'react-router-dom';
 import Layout from './layouts/Layout';
 import Index from './pages/Index';
-// import { io } from 'socket.io-client';
+import { io } from 'socket.io-client';
 
 function App() {
-  // const socket = io('http://localhost:8000');
+  const socket = io('http://localhost:8080');
   useEffect(() => {
-    // socket.on('connect', () => {
-    //   console.log(socket.id); // x8WIv7-mJelg7on_ALbx
-    // });
+    socket.on('connect', () => {
+      console.log(socket.id, 'socket id');
+    });
 
     function getLocalStream() {
       navigator.mediaDevices

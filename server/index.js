@@ -30,6 +30,15 @@ io.on("connection", (socket) => {
   console.log(`User Connected: ${socket.id}`);
 });
 
+
+// Middleware to inject io into request object
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
+
+
 // Define a basic route for checking if the server is running
 app.get('/', (req, res) => {
   res.send('API running');

@@ -3,13 +3,12 @@ const {
   UploadPartCommand,
   CompleteMultipartUploadCommand,
   AbortMultipartUploadCommand,
-  // DeleteObjectCommand,
-  // ListBucketsCommand,
   PutObjectCommand,
   S3Client,
 } = require('@aws-sdk/client-s3');
+const session = require('../model/session');
 
-// Establish new AWS s3 connection
+// Establish AWS s3 connection
 const client = new S3Client({
   credentials: {
     accessKeyId: 'AKIATSWAQXS2MMP2OFMP',
@@ -18,15 +17,17 @@ const client = new S3Client({
   region: 'eu-north-1',
 });
 
-const bucketname = process.env.S3_BUCKET_NAME
+const bucketname = process.env.S3_BUCKET_NAME;
 
-const uploadAudio = async (filename, file) => {
+const uploadAudio = async (filename, file, sessionId, io) => {
   // The minimum upload size for a single data file is 5mb
   const chunkSize = 5 * 1024 * 1024; // 5 MB
   const totalChunks = Math.floor(file.byteLength / chunkSize);
 
   if (totalChunks < 3) {
     try {
+      const options = { new: true };
+
       const command = new PutObjectCommand({
         Bucket: bucketname,
         Key: filename,
@@ -36,12 +37,33 @@ const uploadAudio = async (filename, file) => {
       });
 
       const response = await client.send(command);
-      console.log(response);
+
+      if (response) {
+        const updatedData = {
+          sessionStatus: 'saved',
+          uploadStatus: 100,
+          audioUrl: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${filename}`,
+        };
+
+        const savedResult = await session.findByIdAndUpdate(
+          sessionId,
+          updatedData,
+          options
+        );
+
+        io.emit('fileSaved', {
+          data: savedResult,
+        });
+      }
+
+      return { status: true, audioId: filename };
     } catch (err) {
       console.error(err);
     }
   } else {
     let uploadId;
+
+    const savedSession = await session.findById(sessionId);
 
     try {
       const multipartUpload = await client.send(
@@ -64,6 +86,15 @@ const uploadAudio = async (filename, file) => {
             ? file.byteLength
             : Math.min((i + 1) * chunkSize, file.byteLength);
 
+        // calculate percentage upload, excluded the first and final percentages
+        if (i !== 0 && i === totalChunks - 1) {
+          const percentage = (currentIteration / totalIterations) * 100;
+          // overwrite percentage value from the cureent session
+          io.emit('fileSaved', {
+            data: { ...savedSession, uploadStatus: percentage },
+          });
+        }
+
         uploadPromises.push(
           client
             .send(
@@ -84,7 +115,7 @@ const uploadAudio = async (filename, file) => {
 
       const uploadResults = await Promise.all(uploadPromises);
 
-      return await client.send(
+      const uploadResponse = await client.send(
         new CompleteMultipartUploadCommand({
           Bucket: bucketname,
           Key: filename,
@@ -97,6 +128,25 @@ const uploadAudio = async (filename, file) => {
           },
         })
       );
+
+      // emit saved status for a session
+      if (uploadResponse) {
+        const updatedData = {
+          sessionStatus: 'saved',
+          uploadStatus: 100,
+          audioUrl: `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${filename}`,
+        };
+
+        const savedResult = await session.findByIdAndUpdate(
+          sessionId,
+          updatedData,
+          options
+        );
+
+        io.emit('fileSaved', {
+          data: savedResult,
+        });
+      }
     } catch (err) {
       console.log(err);
       if (uploadId) {

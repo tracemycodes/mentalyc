@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import AudioModal from '../components/Modal/AudioModal';
 import axios from 'axios';
+import io from 'socket.io-client';
 
 type Props = {};
+
 
 const Index = (props: Props) => {
   const [toggleModal, setToggleModal] = useState<boolean>(false);
   const [uploadState, setUploadState] = useState<boolean>(false);
+  const socket = io('http://localhost:8080');
+  
+  useEffect(() => {
+    socket.on('fileSaved', (data: any) => {
+      console.log(data, 'sace nau');
+    })
+
+  },[socket])
 
   const handleNeweRecording = () => {
     setUploadState(false);
