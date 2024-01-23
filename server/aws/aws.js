@@ -3,15 +3,13 @@ const {
   UploadPartCommand,
   CompleteMultipartUploadCommand,
   AbortMultipartUploadCommand,
-  ListBucketsCommand,
+  // DeleteObjectCommand,
+  // ListBucketsCommand,
+  PutObjectCommand,
   S3Client,
 } = require('@aws-sdk/client-s3');
 
-// const s3 =  S3({
-//     accessKeyId: '',
-//     secretAccessKey: '',
-// })
-
+// Establish new AWS s3 connection
 const client = new S3Client({
   credentials: {
     accessKeyId: 'AKIATSWAQXS2MMP2OFMP',
@@ -21,100 +19,95 @@ const client = new S3Client({
 });
 
 const uploadAudio = async (filename, bucketname, file) => {
-  // const bucketName = "test-bucket";
-  // const key = "multipart.txt";
+  // The minimum upload size for a single data file is 5mb
+  const chunkSize = 5 * 1024 * 1024; // 5 MB
+  const totalChunks = Math.floor(file.byteLength / chunkSize);
 
-  let uploadId;
-
-  try {
-    const multipartUpload = await client.send(
-      new CreateMultipartUploadCommand({
+  if (totalChunks < 3) {
+    try {
+      const command = new PutObjectCommand({
         Bucket: bucketname,
         Key: filename,
-      }),
-    );
-
-    uploadId = multipartUpload.UploadId;
-
-    const uploadPromises = [];
-
-
-    const partSize = Math.ceil(file.length / 5);
-
-    // Upload each part.
-    for (let i = 0; i < 5; i++) {
-      const start = i * partSize;
-      const end = start + partSize;
-      uploadPromises.push(
-        client
-          .send(
-            new UploadPartCommand({
-              Bucket: bucketname,
-              Key: filename,
-              UploadId: uploadId,
-              Body: file.subarray(start, end),
-              PartNumber: i + 1,
-            }),
-          )
-          .then((d) => {
-            console.log("Part", i + 1, "uploaded");
-            return d;
-          }),
-      );
-    }
-
-    const uploadResults = await Promise.all(uploadPromises);
-
-    console.log(uploadResults);
-
-    return await client.send(
-      new CompleteMultipartUploadCommand({
-        Bucket: bucketname,
-        Key: filename,
-        UploadId: uploadId,
-        MultipartUpload: {
-          Parts: uploadResults.map(({ ETag }, i) => ({
-            ETag,
-            PartNumber: i + 1,
-          })),
-        },
-      }),
-    );
-
-
-    
-  } catch (err) {
-    console.error(err);
-
-    if (uploadId) {
-      const abortCommand = new AbortMultipartUploadCommand({
-        Bucket: bucketname,
-        Key: filename,
-        UploadId: uploadId,
+        Body: file,
+        ContentType: 'audio/mpeg',
+        ACL: 'public-read',
       });
 
-      await s3Client.send(abortCommand);
+      const response = await client.send(command);
+      console.log(response);
+    } catch (err) {
+      console.error(err);
+    }
+  } else {
+    let uploadId;
+
+    try {
+      const multipartUpload = await client.send(
+        new CreateMultipartUploadCommand({
+          Bucket: bucketname,
+          Key: filename,
+        })
+      );
+
+      uploadId = multipartUpload.UploadId;
+
+      const uploadPromises = [];
+
+      // Upload each chuck part of file data
+      for (let i = 0; i < totalChunks; i++) {
+        const start = i * totalChunks;
+        // calculation to ensure that if last chuck part isn't up to 5mb the total remaining chunk is uploaded as the last chunk
+        const end =
+          i === totalChunks - 1
+            ? file.byteLength
+            : Math.min((i + 1) * chunkSize, file.byteLength);
+
+        uploadPromises.push(
+          client
+            .send(
+              new UploadPartCommand({
+                Bucket: bucketname,
+                Key: filename,
+                UploadId: uploadId,
+                Body: file.subarray(start, end),
+                PartNumber: i + 1,
+              })
+            )
+            .then((d) => {
+              console.log('Part', i + 1, 'uploaded');
+              return d;
+            })
+        );
+      }
+
+      const uploadResults = await Promise.all(uploadPromises);
+
+      return await client.send(
+        new CompleteMultipartUploadCommand({
+          Bucket: bucketname,
+          Key: filename,
+          UploadId: uploadId,
+          MultipartUpload: {
+            Parts: uploadResults.map(({ ETag }, i) => ({
+              ETag,
+              PartNumber: i + 1,
+            })),
+          },
+        })
+      );
+    } catch (err) {
+      console.log(err);
+      if (uploadId) {
+        const abortCommand = new AbortMultipartUploadCommand({
+          Bucket: bucketname,
+          Key: filename,
+          UploadId: uploadId,
+        });
+
+        await client.send(abortCommand);
+      }
     }
   }
-  
-
-  // return new Promise((resolve, reject) => {
-  //     const params = {
-  //         Key: filename,
-  //         Bucket: bucketname,
-  //         Body: file,
-  //         ContentType: 'audio/mpeg',
-  //         ACL: 'public-read'
-  //     }
-
-  //     s3.upload(params, (err, data) => {
-  //         if (err) {
-  //             reject(err)
-  //         } else {
-  //             resolve(data.Location)
-  //         }
-  //     })
-  // })
 };
 
 module.exports = uploadAudio;
