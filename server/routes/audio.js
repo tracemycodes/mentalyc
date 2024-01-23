@@ -62,6 +62,7 @@ router.post('/', upload.single('audio'), async (req, res) => {
         },
         message: 'Session saved successfully.',
       });
+      await uploadAudio(audioId, audioFile.buffer);
     } else {
       res.status(500).json({
         status: 'error',
@@ -71,8 +72,6 @@ router.post('/', upload.single('audio'), async (req, res) => {
         },
       });
     }
-
-    // const link = await uploadAudio(name, audioId, audioFile.buffer)
   } catch (error) {
     res.status(500).send('Server Error');
   }

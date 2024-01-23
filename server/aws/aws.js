@@ -18,7 +18,9 @@ const client = new S3Client({
   region: 'eu-north-1',
 });
 
-const uploadAudio = async (filename, bucketname, file) => {
+const bucketname = process.env.S3_BUCKET_NAME
+
+const uploadAudio = async (filename, file) => {
   // The minimum upload size for a single data file is 5mb
   const chunkSize = 5 * 1024 * 1024; // 5 MB
   const totalChunks = Math.floor(file.byteLength / chunkSize);
