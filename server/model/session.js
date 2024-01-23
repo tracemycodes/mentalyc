@@ -9,11 +9,14 @@ const SessionSchema = mongoose.Schema({
   title: {
     type: String,
     required: true,
-    unique: true
   },
-  status: {
+  sessionStatus: {
     type: String,
-    required: true
+    default: 'pending'
+  },
+  uploadStatus: {
+    type: Number,
+    default: 0, 
   },
   audioName: {
     type: String,
@@ -21,15 +24,14 @@ const SessionSchema = mongoose.Schema({
   },
   audioId: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   audioDuration: {
     type: String,
-    required: true
   },
   audioUrl: {
     type: String,
-    required: true
   },
   date: {
     type: Date,
@@ -37,4 +39,4 @@ const SessionSchema = mongoose.Schema({
   }  
 })
 
-module.exports = mongoose.model('user', SessionSchema)
+module.exports = mongoose.model('session', SessionSchema)
