@@ -5,7 +5,7 @@ import { FaMicrophoneAlt, FaMicrophoneAltSlash } from 'react-icons/fa';
 interface UploadProps {
   name: string;
   title: string;
-  audio: string | null;
+  audio: Blob | null;
 }
 interface Props {
   toggle: boolean;
@@ -18,7 +18,11 @@ interface AudioDevice {
   name: string;
 }
 
-const AudioModal: React.FC<Props> = ({ toggle, handleModalToggle, handleAudioUpload }) => {
+const AudioModal: React.FC<Props> = ({
+  toggle,
+  handleModalToggle,
+  handleAudioUpload,
+}) => {
   const [open, setOpen] = useState<boolean>(false);
   const cancelButtonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -35,6 +39,7 @@ const AudioModal: React.FC<Props> = ({ toggle, handleModalToggle, handleAudioUpl
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [recorder, setRecorder] = useState<MediaRecorder | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [audioFile, setAudioFile] = useState<Blob | null>(null);
   const [sessionForm, setSessionForm] = useState({
     name: '',
     title: '',
@@ -85,7 +90,9 @@ const AudioModal: React.FC<Props> = ({ toggle, handleModalToggle, handleAudioUpl
   }, []);
 
   const getAudioRef = (audioData: any) => {
-    return URL.createObjectURL(new Blob(audioData, {type: 'audio/ogg; codec=opus'}));
+    const audioBlobData = new Blob(audioData, { type: 'audio/ogg; codec=opus' });
+    setAudioFile(audioBlobData);
+    return URL.createObjectURL(audioBlobData);
   };
 
   useEffect(() => {
@@ -149,8 +156,8 @@ const AudioModal: React.FC<Props> = ({ toggle, handleModalToggle, handleAudioUpl
   };
 
   const handleFormSubmit = (e: any) => {
-    handleAudioUpload({...sessionForm, audio: audioUrl})
-  }
+    handleAudioUpload({ ...sessionForm, audio: audioFile });
+  };
 
   return (
     <Transition.Root show={true} as={Fragment}>
