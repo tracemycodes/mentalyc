@@ -26,7 +26,7 @@ const Index = (props: Props) => {
 
     try {
       const response = await axios.post(
-        'http://localhost:8000/api/audio',
+        'http://localhost:8080/api/audio',
         formData,
         {
           headers: {
