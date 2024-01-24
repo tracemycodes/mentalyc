@@ -160,7 +160,7 @@ const AudioModal: React.FC<Props> = ({
   };
 
   return (
-    <Transition.Root show={true} as={Fragment}>
+    <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
         className="relative z-10"
