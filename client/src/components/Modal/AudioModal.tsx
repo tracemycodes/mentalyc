@@ -29,9 +29,12 @@ const AudioModal: React.FC<Props> = ({
   const [microphonePermissionState, setMicrophonePermissionState] = useState<
     'granted' | 'prompt' | 'denied'
   >('denied');
-  const [availableAudioDevices, setAvailableAudioDevices] = useState<
-    AudioDevice[]
-  >([]);
+
+  // // availableAudioDevices list all the audio devices that are currently supported for your device, granting you a chioce to select your prefered audio device
+
+  // const [availableAudioDevices, setAvailableAudioDevices] = useState<
+  //   AudioDevice[]
+  // >([]);
 
   const [selectedAudioDevice, setSelectedAudioDevice] = useState<
     string | undefined
@@ -64,8 +67,7 @@ const AudioModal: React.FC<Props> = ({
     setMicrophonePermissionState(state);
     if (state === 'granted') {
       getAvailableAudioDevices().then((devices) => {
-        console.log(devices);
-        setAvailableAudioDevices(devices);
+        // setAvailableAudioDevices(devices);
         setSelectedAudioDevice(
           devices.find((device) => device.id === 'default')?.id
         );
@@ -90,13 +92,22 @@ const AudioModal: React.FC<Props> = ({
   }, []);
 
   const getAudioRef = (audioData: any) => {
-    const audioBlobData = new Blob(audioData, { type: 'audio/ogg; codec=opus' });
+    const audioBlobData = new Blob(audioData, {
+      type: 'audio/ogg; codec=opus',
+    });
     setAudioFile(audioBlobData);
     return URL.createObjectURL(audioBlobData);
   };
 
   useEffect(() => {
     setOpen(toggle);
+    // reset modal state whenever toggled
+    setAudioFile(null);
+    setAudioUrl(null);
+    setSessionForm({
+      name: '',
+      title: '',
+    });
   }, [toggle]);
 
   const handleStartRecording = () => {
@@ -234,30 +245,37 @@ const AudioModal: React.FC<Props> = ({
 
                         <div className="py-2 flex items-center justify-between">
                           <button
-                            className="border bg-red-700 text-white py-2 px-5 text-sm rounded-md shadow-sm"
+                            className="border bg-[#DE0D6F] hover:bg-[#DE0D6F]/70 text-white py-2 px-5 text-sm rounded-md shadow-sm"
                             onClick={handleRecording}
                           >
                             {isRecording ? 'Stop' : 'Record'}
                           </button>
 
-                          {isRecording ? (
-                            <p className="text-sm">Recording...</p>
-                          ) : audioUrl && !isRecording ? (
-                            <audio src={audioUrl} controls></audio>
-                          ) : (
-                            <p className="text-sm">
-                              click record to attach audio file
+                          <div className="flex flex-col justify-center items-center">
+                            {isRecording ? (
+                              <p className="text-sm">Recording...</p>
+                            ) : audioUrl && !isRecording ? (
+                              <audio src={audioUrl} controls></audio>
+                            ) : (
+                              <p className="text-sm">
+                                click record to attach audio file
+                              </p>
+                            )}
+                            <p className="text-xs mt-1">
+                              {microphonePermissionState === 'granted'
+                                ? 'your mic access is granted'
+                                : 'grant your mic access'}
                             </p>
-                          )}
+                          </div>
 
                           <div className="">
                             <span className="relative flex h-10 w-10">
                               <span
                                 className={`${
                                   isRecording ? 'animate-ping' : ''
-                                } absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75`}
+                                } absolute inline-flex h-full w-full rounded-full bg-[#DE0D6F]/70 opacity-75`}
                               ></span>
-                              <span className="relative inline-flex items-center justify-center rounded-full h-10 w-10 bg-red-500">
+                              <span className="relative inline-flex items-center justify-center rounded-full h-10 w-10 bg-[#DE0D6F]">
                                 {isRecording ? (
                                   <FaMicrophoneAlt className="text-xl text-white" />
                                 ) : (
@@ -275,7 +293,7 @@ const AudioModal: React.FC<Props> = ({
                 <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                   <button
                     type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                    className="inline-flex w-full justify-center rounded-md bg-[#DE0D6F] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#DE0D6F]/70 sm:ml-3 sm:w-auto"
                     onClick={handleFormSubmit}
                   >
                     Submit
