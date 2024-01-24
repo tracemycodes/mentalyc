@@ -11,7 +11,7 @@ const Layout = (props: Props) => {
       <Navbar />
       <div className="flex relative h-[95vh]">
         <Sidebar />
-        <div className="border-2 border-orange-600 p-8 pr-16 ml-60 grow overflow-auto">
+        <div className="px-5 py-8 sm:p-8 xl:pr-16 lg:ml-64 ml-0 grow overflow-auto">
           <Outlet />
         </div>
       </div>

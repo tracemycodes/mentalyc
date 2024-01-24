@@ -99,12 +99,12 @@ const Index: React.FC<Props> = () => {
     <div>
       <h2 className="text-xl font-bold text-[#292D32]">Welcome back, Georgi</h2>
 
-      <div className="flex mt-2 items-center">
+      <div className="flex flex-col lg:flex-row mt-2 lg:items-center">
         <p className="text-[#6C6C6C]">
           Ready to capture another meaningful session?
         </p>
 
-        <div className="ml-auto space-x-6 flex items-center">
+        <div className="lg:ml-auto mt-4 lg:mt-0 justify-between lg:justify-start space-x-6 flex items-center">
           <button
             className="border-2 border-[#DE0D6F] bg-[#DE0D6F] text-white rounded shadow py-1 px-4 flex items-center space-x-2"
             onClick={handleNeweRecording}
