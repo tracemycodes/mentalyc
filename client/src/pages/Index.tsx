@@ -1,49 +1,66 @@
 import React, { useEffect, useState } from 'react';
 import AudioModal from '../components/Modal/AudioModal';
 import { FaMicrophoneAlt } from 'react-icons/fa';
-import { RiDeleteBinLine } from 'react-icons/ri';
 import { RiUpload2Fill } from 'react-icons/ri';
 import axios from 'axios';
 import io from 'socket.io-client';
-import emptySvg from '../assets/empty-box.svg';
+import SessionTable from '../components/Table/SessionTable';
 
 type Props = {};
 
-const Index = (props: Props) => {
+const Index: React.FC<Props> = () => {
   const [toggleModal, setToggleModal] = useState<boolean>(false);
-  const [uploadState, setUploadState] = useState<boolean>(false);
-  const [sessionList, setSessionList] = useState<[any][]>([]);
+  const [/*uploadState*/, setUploadState] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [sessionList, setSessionList] = useState<[any][] | null>(null);
   const socket = io('http://localhost:8080');
 
+  // useEffect to listen to web socket emitted events for ssesion upload progress
   useEffect(() => {
     socket.on('fileSaved', (data: any) => {
-      console.log(data, 'sace nau');
+      // update the status and progress of session with web socket
+      if (sessionList) {
+        setSessionList(
+          sessionList?.map((item: any) => {
+            return item._id === data.data._id ? data.data : item;
+          })
+        );
+      }
     });
+    // eslint-disable-next-line
   }, [socket]);
 
   useEffect(() => {
     const getSessionData = async () => {
-      const response = await axios.get('http://localhost:8080/api/audio');
-
-      console.log(response.data.data.sessions);
-      if (response.data.status === 'success') {
-        setSessionList(response.data.data.sessions);
+      try {
+        setLoading(true);
+        const response = await axios.get('http://localhost:8080/api/audio');
+        if (response.data.status === 'success') {
+          setLoading(false);
+          setSessionList(response.data.data.sessions);
+        }
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
       }
     };
 
     getSessionData();
   }, []);
 
+  // triggers when a user clicks record, to save a new audio recording.
   const handleNeweRecording = () => {
     setUploadState(false);
     setToggleModal(!toggleModal);
   };
 
+  // triggers when the upload button is clicked, this uploads an already existing audio record form user files.
   const handleUploadRecording = () => {
     setUploadState(true);
     setToggleModal(!toggleModal);
   };
 
+  // Audio session upload function
   const handleAudioUpload = async (sessionData: any) => {
     const formData = new FormData();
     formData.append('name', sessionData.name);
@@ -60,9 +77,21 @@ const Index = (props: Props) => {
           },
         }
       );
-      console.log('Upload successful', response.data);
+      setToggleModal(!toggleModal);
+      if (sessionList) {
+        setSessionList([...sessionList, response.data.data]);
+      } else {
+        setSessionList([response.data.data]);
+      }
     } catch (error) {
       console.error('Error uploading file', error);
+    }
+  };
+
+  // fuction to remove a deleted session from state when deleted from DB
+  const handleDeletedSession = (idx: string) => {
+    if (sessionList) {
+      setSessionList(sessionList?.filter((item: any) => item._id !== idx));
     }
   };
 
@@ -94,132 +123,11 @@ const Index = (props: Props) => {
         </div>
       </div>
 
-      <div className="overflow-auto w-full mt-10 relative sm:mx-0.5 lg:mx-0.5 shadow">
-        <div className="py-2 inline-block min-w-full">
-          <div className="overflow-hidden">
-            <table className="min-w-full">
-              <thead className="bg-[#FFF0F7] border-b">
-                <tr className="">
-                  <th
-                    scope="col"
-                    className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
-                  >
-                    Name
-                  </th>
-
-                  <th
-                    scope="col"
-                    className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
-                  >
-                    Title
-                  </th>
-
-                  <th
-                    scope="col"
-                    className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
-                  >
-                    Duration
-                  </th>
-
-                  <th
-                    scope="col"
-                    className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
-                  >
-                    File
-                  </th>
-
-                  <th
-                    scope="col"
-                    className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
-                  >
-                    Created At
-                  </th>
-
-                  <th
-                    scope="col"
-                    className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
-                  >
-                    Status
-                  </th>
-
-                  <th
-                    scope="col"
-                    className="text-sm font-medium text-gray-900 px-6 py-4 text-left"
-                  ></th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {sessionList.map((item: any, index) => (
-                  <tr
-                    className={`${index % 2 !== 0 ? 'bg-[#EEF0F4]/30' : ''}`}
-                    key={item._id}
-                  >
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      {item.name}
-                    </td>
-
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      {item.title}
-                    </td>
-
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      {item.duration}
-                    </td>
-
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      {item.audioUrl ? (
-                        <audio
-                          src={item.audioUrl}
-                          controls
-                          className="h-8 w-[13rem]"
-                        />
-                      ) : (
-                        <p>upload</p>
-                      )}
-                    </td>
-
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      {new Date(item.date).toLocaleDateString()}
-                    </td>
-
-                    <td className="text-sm text-gray-900 font-light px-6 py-4">
-                      <p
-                        className={`${
-                          item.sessionStatus === 'saved'
-                            ? 'bg-[#DDF2CC]'
-                            : 'bg-[#FFEBEB]'
-                        } py-1 px-3 text-center rounded shadow`}
-                      >
-                        {item.sessionStatus}
-                      </p>
-                    </td>
-
-                    <td className="text-xl text-gray-900 font-light px-6 py-4">
-                      <RiDeleteBinLine className='text-red-400 cursor-pointer' />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            <div
-              className={`${
-                sessionList.length > 0 ? 'hidden' : 'flex'
-              } min-h-[30rem] w-full items-center justify-center`}
-            >
-              <div className="w-[25rem] h-full">
-                <img
-                  src={emptySvg}
-                  className="object-cover w-full h-full"
-                  alt="empty"
-                />
-                <p className="text-center">No session available</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <SessionTable
+        sessionList={sessionList}
+        loading={loading}
+        handleDeletedSession={handleDeletedSession}
+      />
 
       <AudioModal
         toggle={toggleModal}

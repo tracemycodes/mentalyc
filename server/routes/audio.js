@@ -63,19 +63,7 @@ router.post('/', upload.single('audio'), async (req, res) => {
     if (savedSession) {
       res.status(201).json({
         status: 'success',
-        data: {
-          id: savedSession.id,
-          name: savedSession.name,
-          title: savedSession.title,
-          sessionStatus: savedSession.sessionStatus,
-          uploadStatus: savedSession.uploadStatus,
-          audio: {
-            name: savedSession.audioName,
-            duration: savedSession.audioDuration,
-            id: savedSession.audioId,
-            url: savedSession.audioUrl,
-          },
-        },
+        data: savedSession,
         message: 'Session saved successfully.',
       });
 
@@ -99,7 +87,7 @@ router.post('/', upload.single('audio'), async (req, res) => {
 // @access    public
 router.delete('/', async (req, res) => {
   try {
-    const id = req.params.id;
+    const {id} = req.query;
 
     let session = await SessionSchema.findById(id);
 
@@ -110,12 +98,12 @@ router.delete('/', async (req, res) => {
       });
     }
 
-    const deletedSession = await SessionSchema.findByIdAndRemove(id);
+    const deletedSession = await SessionSchema.deleteOne({ _id: id });
 
     if (deletedSession) {
       res.status(200).json({
         status: 'success',
-        data: null,
+        data: deletedSession,
         message: 'Session deleted successfully',
       });
     } else {
@@ -125,6 +113,7 @@ router.delete('/', async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error);
     res.status(500).send('Server Error');
   }
 });
