@@ -1,11 +1,16 @@
 import React from 'react';
+import logo from '../../assets/mentalyc-logo.png'
 
 type Props = {};
 
 const Navbar = (props: Props) => {
   return (
-    <div className="border-2 border-red-800 p-4 px-8 sm:px-16">
-      <div className="border border-green-700 m-auto">Navbar</div>
+    <div className="border-b border-[#DE0D6F] p-4 px-5 sm:px-8 py-6">
+      <div className="m-auto">
+        <div className="h-8 w-12">
+          <img src={logo} alt="logo" className='w-full h-full object-cover' />
+        </div>
+      </div>
     </div>
   );
 };
