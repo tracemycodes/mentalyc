@@ -9,22 +9,23 @@ type Props = {
   handleDeletedSession: (idx: string) => void;
 };
 
-const SessionTable: React.FC<Props> = ({ sessionList, loading, handleDeletedSession }) => {
+const SessionTable: React.FC<Props> = ({
+  sessionList,
+  loading,
+  handleDeletedSession,
+}) => {
   const handleSessionDelete = async (idx: string) => {
     try {
-        const deletedSession = await axios.delete(
-          `http://localhost:8080/api/audio?id=${idx}`
-        );
-
-        if (deletedSession.status === 200) {
-            handleDeletedSession(idx)
-        }
-        
-        console.log(deletedSession);
+      const deletedSession = await axios.delete(
+        `http://localhost:8080/api/audio?id=${idx}`
+      );
+      // deleted session props passed to parent component for removal from state
+      if (deletedSession.status === 200) {
+        handleDeletedSession(idx);
+      }
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-
   };
 
   return (
@@ -110,7 +111,11 @@ const SessionTable: React.FC<Props> = ({ sessionList, loading, handleDeletedSess
                           className="h-8 w-[13rem]"
                         />
                       ) : (
-                        <p>upload</p>
+                        <div className="w-[8rem] rounded-full h-2 bg-gray-200">
+                          <div
+                            className={`bg-[#DE0D6F] h-2 rounded-full w-[${item.uploadStatus}%]`}
+                          ></div>
+                        </div>
                       )}
                     </td>
 
