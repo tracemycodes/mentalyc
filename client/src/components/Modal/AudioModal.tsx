@@ -6,6 +6,7 @@ interface UploadProps {
   name: string;
   title: string;
   audio: Blob | null;
+  duration: number;
 }
 interface Props {
   toggle: boolean;
@@ -25,6 +26,7 @@ const AudioModal: React.FC<Props> = ({
 }) => {
   const [open, setOpen] = useState<boolean>(false);
   const cancelButtonRef = useRef<HTMLButtonElement | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const [microphonePermissionState, setMicrophonePermissionState] = useState<
     'granted' | 'prompt' | 'denied'
@@ -75,6 +77,8 @@ const AudioModal: React.FC<Props> = ({
     }
   };
 
+
+  // instantiate the window audio setup grant mic permisions and detecting available audio devices
   useEffect(() => {
     navigator.permissions
       .query({ name: 'microphone' as PermissionName })
@@ -168,7 +172,15 @@ const AudioModal: React.FC<Props> = ({
   };
 
   const handleFormSubmit = (e: any) => {
-    handleAudioUpload({ ...sessionForm, audio: audioFile });
+    // Retrive audio duration from DOM element.
+    if (audioRef.current) {
+      const duration = audioRef.current.duration;
+      handleAudioUpload({
+        ...sessionForm,
+        audio: audioFile,
+        duration: duration,
+      });
+    }
   };
 
   return (
@@ -257,7 +269,11 @@ const AudioModal: React.FC<Props> = ({
                               {isRecording ? (
                                 <p className="text-sm">Recording...</p>
                               ) : audioUrl && !isRecording ? (
-                                <audio src={audioUrl} controls></audio>
+                                <audio
+                                  src={audioUrl}
+                                  controls
+                                  ref={audioRef}
+                                ></audio>
                               ) : (
                                 <p className="text-sm">
                                   click record to attach audio file

@@ -42,7 +42,7 @@ router.get('/', async (req, res) => {
 // @access    public
 router.post('/', upload.single('audio'), async (req, res) => {
   try {
-    const { name, title } = req.body; // Access other form fields
+    const { name, title, duration } = req.body; // Access other form fields
 
     const audioFile = req.file; // Access the uploaded audio file
 
@@ -55,7 +55,8 @@ router.post('/', upload.single('audio'), async (req, res) => {
       title: title,
       audioName: audioFile.originalname,
       audioId: audioId,
-      audioDuration: '',
+      audioDuration: duration.toString(),
+      uploadStatus: 10,
     });
 
     const savedSession = await session.save();
@@ -87,7 +88,7 @@ router.post('/', upload.single('audio'), async (req, res) => {
 // @access    public
 router.delete('/', async (req, res) => {
   try {
-    const {id} = req.query;
+    const { id } = req.query;
 
     let session = await SessionSchema.findById(id);
 
