@@ -6,8 +6,10 @@ import Index from './pages/Index';
 import { io } from 'socket.io-client';
 import Records from './pages/Records';
 
+const BASE_URL = process.env.REACT_APP_API_URL
+
 function App() {
-  const socket = io('http://localhost:8080');
+  const socket = io(BASE_URL ? BASE_URL : 'http://localhost:8080');
   useEffect(() => {
     socket.on('connect', () => {
       console.log(socket.id, 'socket id');
@@ -27,6 +29,7 @@ function App() {
     }
 
     getLocalStream();
+    // eslint-disable-next-line
   }, []);
 
   return (

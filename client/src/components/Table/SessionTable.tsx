@@ -9,6 +9,8 @@ type Props = {
   handleDeletedSession: (idx: string) => void;
 };
 
+const BASE_URL = process.env.REACT_APP_API_URL;
+
 const SessionTable: React.FC<Props> = ({
   sessionList,
   loading,
@@ -17,7 +19,7 @@ const SessionTable: React.FC<Props> = ({
   const handleSessionDelete = async (idx: string) => {
     try {
       const deletedSession = await axios.delete(
-        `http://localhost:8080/api/audio?id=${idx}`
+        `${BASE_URL}/api/audio?id=${idx}`
       );
       // deleted session props passed to parent component for removal from state
       if (deletedSession.status === 200) {
@@ -100,7 +102,7 @@ const SessionTable: React.FC<Props> = ({
                     </td>
 
                     <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      {item.duration}
+                      {item.audioDuration} sec
                     </td>
 
                     <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
