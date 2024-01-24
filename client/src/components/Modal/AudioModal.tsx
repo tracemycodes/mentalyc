@@ -97,6 +97,7 @@ const AudioModal: React.FC<Props> = ({
     // eslint-disable-next-line
   }, []);
 
+  // Generate window object url from audio files
   const getAudioRef = (audioData: any) => {
     const audioBlobData = new Blob(audioData, {
       type: 'audio/ogg; codec=opus',
@@ -105,6 +106,7 @@ const AudioModal: React.FC<Props> = ({
     return URL.createObjectURL(audioBlobData);
   };
 
+  // Reset toggle state, and rest session form
   useEffect(() => {
     setOpen(toggle);
     // reset modal state whenever toggled
