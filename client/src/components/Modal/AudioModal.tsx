@@ -13,10 +13,10 @@ interface Props {
   handleAudioUpload: (params: UploadProps) => void;
 }
 
-interface AudioDevice {
-  id: string;
-  name: string;
-}
+// interface AudioDevice {
+//   id: string;
+//   name: string;
+// }
 
 const AudioModal: React.FC<Props> = ({
   toggle,
@@ -89,6 +89,8 @@ const AudioModal: React.FC<Props> = ({
           }
         };
       });
+
+    // eslint-disable-next-line
   }, []);
 
   const getAudioRef = (audioData: any) => {
@@ -162,7 +164,6 @@ const AudioModal: React.FC<Props> = ({
 
   const handleFormChange = (e: any) => {
     e.preventDefault();
-    console.log(e.target.value, e.target.name);
     setSessionForm({ ...sessionForm, [e.target.name]: e.target.value });
   };
 
@@ -191,7 +192,7 @@ const AudioModal: React.FC<Props> = ({
         </Transition.Child>
 
         <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+          <div className="flex min-h-full justify-center p-4 text-center items-center sm:p-0">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -201,9 +202,9 @@ const AudioModal: React.FC<Props> = ({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-xl">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-full sm:max-w-xl">
                 <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                  <div className="mt-3 text-center sm:text-left">
+                  <div className="mt-3 text-left">
                     <Dialog.Title
                       as="h3"
                       className="text-base font-semibold leading-6 text-gray-900"
@@ -243,46 +244,48 @@ const AudioModal: React.FC<Props> = ({
                           />
                         </div>
 
-                        <div className="py-2 flex items-center justify-between">
+                        <div className="py-2 flex flex-col md:flex-row md:items-center md:justify-between">
                           <button
-                            className="border bg-[#DE0D6F] hover:bg-[#DE0D6F]/70 text-white py-2 px-5 text-sm rounded-md shadow-sm"
+                            className="border bg-[#DE0D6F] hover:bg-[#DE0D6F]/70 text-white py-2 px-5 text-sm max-w-[6rem] md:max-w-full rounded-md shadow-sm"
                             onClick={handleRecording}
                           >
                             {isRecording ? 'Stop' : 'Record'}
                           </button>
 
-                          <div className="flex flex-col justify-center items-center">
-                            {isRecording ? (
-                              <p className="text-sm">Recording...</p>
-                            ) : audioUrl && !isRecording ? (
-                              <audio src={audioUrl} controls></audio>
-                            ) : (
-                              <p className="text-sm">
-                                click record to attach audio file
+                          <div className="flex justify-between md:justify-start mt-4 md:mt-0 space-x-3">
+                            <div className="flex flex-col justify-center items-center">
+                              {isRecording ? (
+                                <p className="text-sm">Recording...</p>
+                              ) : audioUrl && !isRecording ? (
+                                <audio src={audioUrl} controls></audio>
+                              ) : (
+                                <p className="text-sm">
+                                  click record to attach audio file
+                                </p>
+                              )}
+                              <p className="text-xs mt-1">
+                                {microphonePermissionState === 'granted'
+                                  ? 'your mic access is granted'
+                                  : 'grant your mic access'}
                               </p>
-                            )}
-                            <p className="text-xs mt-1">
-                              {microphonePermissionState === 'granted'
-                                ? 'your mic access is granted'
-                                : 'grant your mic access'}
-                            </p>
-                          </div>
+                            </div>
 
-                          <div className="">
-                            <span className="relative flex h-10 w-10">
-                              <span
-                                className={`${
-                                  isRecording ? 'animate-ping' : ''
-                                } absolute inline-flex h-full w-full rounded-full bg-[#DE0D6F]/70 opacity-75`}
-                              ></span>
-                              <span className="relative inline-flex items-center justify-center rounded-full h-10 w-10 bg-[#DE0D6F]">
-                                {isRecording ? (
-                                  <FaMicrophoneAlt className="text-xl text-white" />
-                                ) : (
-                                  <FaMicrophoneAltSlash className="text-xl text-white" />
-                                )}
+                            <div className="">
+                              <span className="relative flex h-10 w-10">
+                                <span
+                                  className={`${
+                                    isRecording ? 'animate-ping' : ''
+                                  } absolute inline-flex h-full w-full rounded-full bg-[#DE0D6F]/70 opacity-75`}
+                                ></span>
+                                <span className="relative inline-flex items-center justify-center rounded-full h-10 w-10 bg-[#DE0D6F]">
+                                  {isRecording ? (
+                                    <FaMicrophoneAlt className="text-xl text-white" />
+                                  ) : (
+                                    <FaMicrophoneAltSlash className="text-xl text-white" />
+                                  )}
+                                </span>
                               </span>
-                            </span>
+                            </div>
                           </div>
                         </div>
                       </form>
