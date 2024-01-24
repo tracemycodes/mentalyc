@@ -4,6 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 import Layout from './layouts/Layout';
 import Index from './pages/Index';
 import { io } from 'socket.io-client';
+import Records from './pages/Records';
 
 function App() {
   const socket = io('http://localhost:8080');
@@ -32,6 +33,7 @@ function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Index />} />
+        <Route path='/records' element={<Records />} />
       </Route>
     </Routes>
   );
