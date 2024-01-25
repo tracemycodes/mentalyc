@@ -12,7 +12,7 @@
 
 This React application, is built using a mobile-first approach, it is designed to meet the product requirements of therapists, providing an optimal user experience during the session upload process. It leverages real-time communication through WebSockets to update the progress of audio files obtained from the browser's Media API to an AWS S3 bucket server. The real-time connection is facilitated by socket.io and an Express server hosted on an EC2 instance. The mobile-first design prioritizes the therapist's journey, enhancing the overall user experience of the application.
 
-users are able to:
+## users are able to:
 
 - Navigate to the dashboard to view all previously recorded sessions.
 Record New Session.
