@@ -22,16 +22,23 @@ const Index: React.FC<Props> = () => {
     socket.on('fileSaved', (data: any) => {
       // update the status and progress of session with web socket
       if (sessionList) {
-        setSessionList(
-          sessionList?.map((item: any) => {
-            return item._id === data.data._id ? data.data : item;
-          })
-        );
+        // Check if the object with the same id exists
+        const newArray = sessionList.map((item: any) => {
+          return item._id === data.data._id ? data.data : item;
+        });
+
+        // If the object with the same id doesn't exist, add it to the array
+        if (!sessionList.some((item: any) => item._id === data.data._id)) {
+          newArray.push(data.data);
+        }
+
+        setSessionList(newArray);
       }
     });
     // eslint-disable-next-line
   }, [socket]);
 
+  // get session list on page mount
   useEffect(() => {
     const getSessionData = async () => {
       try {
@@ -47,7 +54,10 @@ const Index: React.FC<Props> = () => {
       }
     };
 
-    getSessionData();
+    if (!sessionList) {
+      getSessionData();
+    }
+    //eslint-disable-next-line
   }, []);
 
   // triggers when a user clicks record, to save a new audio recording.
@@ -76,12 +86,12 @@ const Index: React.FC<Props> = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      setToggleModal(!toggleModal);
       if (sessionList) {
         setSessionList([...sessionList, response.data.data]);
       } else {
         setSessionList([response.data.data]);
       }
+      setToggleModal(!toggleModal);
     } catch (error) {
       console.error('Error uploading file', error);
     }
