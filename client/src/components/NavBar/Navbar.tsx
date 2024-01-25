@@ -5,7 +5,7 @@ type Props = {};
 
 const Navbar = (props: Props) => {
   return (
-    <div className="border-b border-[#DE0D6F] p-4 px-5 sm:px-8 py-6">
+    <div className="border-b border-pink-shed p-4 px-5 sm:px-8 py-6">
       <div className="m-auto">
         <div className="h-8 w-12">
           <img src={logo} alt="logo" className='w-full h-full object-cover' />

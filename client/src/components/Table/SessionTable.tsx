@@ -35,7 +35,7 @@ const SessionTable: React.FC<Props> = ({
       <div className="py-2 inline-block min-w-full">
         <div className="overflow-hidden">
           <table className="min-w-full">
-            <thead className="bg-[#FFF0F7] border-b">
+            <thead className="bg-pink-light border-b">
               <tr className="">
                 <th
                   scope="col"
@@ -115,7 +115,7 @@ const SessionTable: React.FC<Props> = ({
                       ) : (
                         <div className="w-[8rem] rounded-full h-2 bg-gray-200">
                           <div
-                            className={`bg-[#DE0D6F] h-2 rounded-full w-[${item.uploadStatus}%]`}
+                            className={`bg-pink-shed h-2 rounded-full w-[${item.uploadStatus}%]`}
                           ></div>
                         </div>
                       )}

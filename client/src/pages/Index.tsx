@@ -12,7 +12,6 @@ const BASE_URL = process.env.REACT_APP_API_URL;
 
 const Index: React.FC<Props> = () => {
   const [toggleModal, setToggleModal] = useState<boolean>(false);
-  const [, /*uploadState*/ setUploadState] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [sessionList, setSessionList] = useState<[any][] | null>(null);
   const socket = io(BASE_URL ? BASE_URL : 'http://localhost:8080');
@@ -62,13 +61,11 @@ const Index: React.FC<Props> = () => {
 
   // triggers when a user clicks record, to save a new audio recording.
   const handleNeweRecording = () => {
-    setUploadState(false);
     setToggleModal(!toggleModal);
   };
 
   // triggers when the upload button is clicked, this uploads an already existing audio record form user files.
   const handleUploadRecording = () => {
-    setUploadState(true);
     setToggleModal(!toggleModal);
   };
 
@@ -79,6 +76,7 @@ const Index: React.FC<Props> = () => {
     formData.append('title', sessionData.title);
     formData.append('audio', sessionData.audio);
     formData.append('duration', sessionData.duration);
+    setToggleModal(!toggleModal);
 
     try {
       const response = await axios.post(`${BASE_URL}/api/audio`, formData, {
@@ -91,7 +89,6 @@ const Index: React.FC<Props> = () => {
       } else {
         setSessionList([response.data.data]);
       }
-      setToggleModal(!toggleModal);
     } catch (error) {
       console.error('Error uploading file', error);
     }
@@ -106,16 +103,16 @@ const Index: React.FC<Props> = () => {
 
   return (
     <div>
-      <h2 className="text-xl font-bold text-[#292D32]">Welcome back, Georgi</h2>
+      <h2 className="text-xl font-bold text-header-one">Welcome back, Georgi</h2>
 
       <div className="flex flex-col lg:flex-row mt-2 lg:items-center">
-        <p className="text-[#6C6C6C]">
+        <p className="text-text-one">
           Ready to capture another meaningful session?
         </p>
 
         <div className="lg:ml-auto mt-4 lg:mt-0 justify-between lg:justify-start space-x-6 flex items-center">
           <button
-            className="border-2 border-[#DE0D6F] bg-[#DE0D6F] text-white rounded shadow py-1 px-4 flex items-center space-x-2"
+            className="border-2 border-pink-shed bg-pink-shed text-white rounded shadow py-1 px-4 flex items-center space-x-2"
             onClick={handleNeweRecording}
           >
             <FaMicrophoneAlt />
@@ -123,7 +120,7 @@ const Index: React.FC<Props> = () => {
           </button>
 
           <button
-            className="border-2 border-[#DE0D6F] text-[#DE0D6F] rounded shadow py-1 px-4 flex items-center space-x-2"
+            className="border-2 border-pink-shed text-pink-shed rounded shadow py-1 px-4 flex items-center space-x-2"
             onClick={handleUploadRecording}
           >
             <RiUpload2Fill />
