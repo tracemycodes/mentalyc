@@ -3,9 +3,9 @@
 - Mentalyc is a tool that helps therapists automatically write their therapy notes using AI.
 
 **Link to project:** https://mentalyc.vercel.app/
+
 **Link to video presentation:** https://www.loom.com/share/ef9b32a643334690a27efb9afafcd9b4?sid=b54bdf0c-efa2-4c48-9171-9d1a5895695d
 
-![Design preview for the E-commerce product page](https://i.ibb.co/ZRjGVH2/Screenshot-2024-01-25-at-7-09-29-AM.png)
 
 ## How This was developed:
 
