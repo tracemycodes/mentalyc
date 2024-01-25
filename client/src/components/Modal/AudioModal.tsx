@@ -14,11 +14,6 @@ interface Props {
   handleAudioUpload: (params: UploadProps) => void;
 }
 
-// interface AudioDevice {
-//   id: string;
-//   name: string;
-// }
-
 const AudioModal: React.FC<Props> = ({
   toggle,
   handleModalToggle,
@@ -31,12 +26,6 @@ const AudioModal: React.FC<Props> = ({
   const [microphonePermissionState, setMicrophonePermissionState] = useState<
     'granted' | 'prompt' | 'denied'
   >('denied');
-
-  // // availableAudioDevices list all the audio devices that are currently supported for your device, granting you a chioce to select your prefered audio device
-
-  // const [availableAudioDevices, setAvailableAudioDevices] = useState<
-  //   AudioDevice[]
-  // >([]);
 
   const [selectedAudioDevice, setSelectedAudioDevice] = useState<
     string | undefined
@@ -76,7 +65,6 @@ const AudioModal: React.FC<Props> = ({
       });
     }
   };
-
 
   // instantiate the window audio setup grant mic permisions and detecting available audio devices
   useEffect(() => {
