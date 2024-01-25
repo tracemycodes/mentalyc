@@ -4,7 +4,7 @@
 
 **Link to project:** https://agba-tracemycodes-e-commerce-product-page.netlify.app/
 
-![Design preview for the E-commerce product page](https://i.ibb.co/bscMYRQ/Screenshot-2024-01-25-at-7-00-10-AM.png)
+![Design preview for the E-commerce product page](https://i.ibb.co/ZRjGVH2/Screenshot-2024-01-25-at-7-09-29-AM.png)
 
 ## How This was developed:
 
@@ -14,72 +14,82 @@ This React application, is built using a mobile-first approach, it is designed t
 
 users are able to:
 
-- See all past recorded session from their dashboard.
-- Click on the record button to open  a modal to fill in a current session detail.
-- View if they have their Audio Mic access of their PC enabled.
-- Record an audio session and visually see that a record is in place.
-- Upload a record and see the progress for large files.
-- Delete a past session.
-- Carry out all this CRUD operarion with a persisting Database.
+- Navigate to the dashboard to view all previously recorded sessions.
+Record New Session.
+- Initiate a new session by clicking on the record button, which opens a modal to input current session details.
+- Verify if the audio microphone access on the PC is enabled before starting a recording.
+- Perform an audio recording and visually confirm that the recording is in progress.
+- Upload a recorded session and monitor the progress, especially for larger files.
+- Delete a past session from the dashboard, demonstrating the ability to perform CRUD operations.
+- Ensure that all CRUD operations, including session creation, retrieval, update, and deletion, are reflected in a persisting database.
 
 
 ## Optimizations
 
 Future optimizations which can be included to this application includes but not limited to.
 
-- Integrating a flow where users are able to choose among the available audio devices for their device to record, this might include headphones or external Mic devices.
-- Adding a speech to text transcript for recorded audios.
+- Implement a feature allowing users to choose from available audio devices, including options such as headphones or external microphones, to provide more flexibility in recording sessions.
+- Integrate a speech-to-text transcription capability for recorded audio sessions, enabling users to access written transcripts of their recordings for improved accessibility and usability.
+- Include form validation to the session form to prevent null/empty field submission.
 
 ## Demo.
-![image]([https://i.postimg.cc/LXD6tj0K/Screenshot-2023-03-09-at-05-49-18.png](https://i.ibb.co/bscMYRQ/Screenshot-2024-01-25-at-7-00-10-AM.png))
+![image](https://i.ibb.co/bscMYRQ/Screenshot-2024-01-25-at-7-00-10-AM.png)
 
-![image](https://i.postimg.cc/C5Wyk1Yp/IMG-8372.png)
+![image](https://i.ibb.co/fQy1xcP/Screenshot-2024-01-25-at-7-04-47-AM.png)
+
+![image](https://i.ibb.co/Q9qX3cy/Screenshot-2024-01-25-at-7-06-33-AM.png)
+
+![image](https://i.ibb.co/ZRjGVH2/Screenshot-2024-01-25-at-7-09-29-AM.png)
 
 
 
-# Getting Started with Create React App
+# Getting Started In Your Local Environment
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) TS template.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using TS template.
+
+* git clone the repository.
+
+```
+  $ git clone https://github.com/tracemycodes/mentalyc.git
+```
+
+- open `mentalyc`.
+
+```
+  $ cd mentalyc
+```
+
+- install dependencies.
+```
+ $ npm install
+```
+
+- install dependencies for both server & client cd client/cd server then run.
+```
+ $ npm install
+```
 
 ## Available Scripts
 
 In the project directory, you can run:
 
-### `npm start`
+### `npm run dev`
 
-Runs the app in the development mode.\
+Runs the app in the development mode and runs both server/client. client on port 3000, server on the defined port of your env\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 The page will reload if you make edits.\
 You will also see any lint errors in the console.
 
-### `npm test`
+## The following env values are required for the client floder
+- REACT_APP_API_URL: "the value of your server port - http://localhost:8080
+"
+## The following env values are required for the server & root folder
+- NODE_ENV=development
+- PORT=8080
+- MONGO_URI='mongodb access key'
+- AWS_ACCESS_KEY_ID=''
+- AWS_SECRET_ACCESS_KEY=''
+- AWS_REGION=''
+- S3_BUCKET_NAME=''
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
